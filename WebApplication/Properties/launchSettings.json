@@ -12,7 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PATH": "C:\\nvm4w\\nodejs;%PATH%"
       }
     },
     "aps-configurator-inventor": {
@@ -20,7 +21,8 @@
       "commandLineArgs": "poc=true",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PATH": "C:\\nvm4w\\nodejs;%PATH%"
       },
       "applicationUrl": "https://localhost:5001"
     }
