@@ -78,7 +78,9 @@ namespace WebApplication
                 var oldCheckType = publisher.CompletionCheck;
                 publisher.CompletionCheck = CompletionCheck.Polling;
 
-                initializer.InitializeAsync().Wait();
+                var projectFilter = Configuration.GetValue<string>("project");
+                var force = Configuration.GetValue<bool>("force");
+                initializer.InitializeAsync(projectFilter, force).Wait();
 
                 // reset configured value of completion check method
                 publisher.CompletionCheck = oldCheckType;

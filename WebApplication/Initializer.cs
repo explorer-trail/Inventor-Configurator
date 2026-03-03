@@ -72,7 +72,7 @@ namespace WebApplication
             using var scope = _logger.BeginScope("Init AppBundles and Activities");
             await _fdaClient.InitializeAsync();
         }
-        public async Task InitializeAsync()
+        public async Task InitializeAsync(string projectFilter = null, bool force = false)
         {
             using var scope = _logger.BeginScope("Init");
             _logger.LogInformation("Initializing base data");
@@ -96,9 +96,33 @@ namespace WebApplication
 
             _logger.LogInformation($"Bucket {_bucket.BucketKey} created");
 
+            var existingProjects = await _projectService.GetProjectNamesAsync(_bucket);
+
             // publish default project files (specified by the appsettings.json)
             foreach (DefaultProjectConfiguration defaultProjectConfig in _defaultProjectsConfiguration.Projects)
             {
+                // skip projects not matching the filter (when a specific project is requested)
+                if (projectFilter != null && !defaultProjectConfig.Name.Equals(projectFilter, StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogInformation($"Skipping project '{defaultProjectConfig.Name}'.");
+                    continue;
+                }
+
+                // if the project already exists: delete it first when force=true, otherwise skip
+                if (existingProjects.Contains(defaultProjectConfig.Name))
+                {
+                    if (force)
+                    {
+                        _logger.LogInformation($"Project '{defaultProjectConfig.Name}' already exists, re-adopting (force=true).");
+                        await _projectService.DeleteProjects(new[] { defaultProjectConfig.Name }, _bucket);
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Project '{defaultProjectConfig.Name}' already exists, skipping.");
+                        continue;
+                    }
+                }
+
                 var signedUrl = await _projectService.TransferProjectToOssAsync(_bucket, defaultProjectConfig);
 
                 await _projectWork.AdoptAsync(defaultProjectConfig, signedUrl);

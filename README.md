@@ -1,3 +1,16 @@
+
+  ┌───────────────────────────────────────────────────┬───────────────────────────────────────────────────────┐
+  │                      Command                      │                        Effect                         │
+  ├───────────────────────────────────────────────────┼───────────────────────────────────────────────────────┤
+  │ dotnet run initialize=true                        │ Adds any projects not yet in OSS, skips existing ones │
+  ├───────────────────────────────────────────────────┼───────────────────────────────────────────────────────┤
+  │ dotnet run initialize=true project=Box            │ Adds Box if it doesn't exist yet, skips if it does    │
+  ├───────────────────────────────────────────────────┼───────────────────────────────────────────────────────┤
+  │ dotnet run initialize=true project=Box force=true │ Deletes Box and re-adopts it from scratch             │
+  ├───────────────────────────────────────────────────┼───────────────────────────────────────────────────────┤
+  │ dotnet run clear=true                             │ Deletes everything (still needed for a full reset)    │
+  └───────────────────────────────────────────────────┴───────────────────────────────────────────────────────┘
+
 # Configurator Inventor
 Demo application showcasing Configuration with Inventor Automation API
 
