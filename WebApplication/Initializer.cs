@@ -77,9 +77,10 @@ namespace WebApplication
             using var scope = _logger.BeginScope("Init");
             _logger.LogInformation("Initializing base data");
 
-            // OSS bucket might fail to create, so repeat attempts
+            // OSS bucket might fail to create, so repeat attempts.
+            // 409 Conflict means the bucket already exists, which is fine — treat as success.
             var createBucketPolicy = Policy
-                .Handle<OssApiException>()
+                .Handle<OssApiException>(e => e.HttpResponseMessage?.StatusCode != System.Net.HttpStatusCode.Conflict)
                 .WaitAndRetryAsync(
                     retryCount: 4,
                     retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
@@ -90,8 +91,13 @@ namespace WebApplication
                     // create bundles and activities
                     _fdaClient.InitializeAsync(),
 
-                    // create the bucket
-                    createBucketPolicy.ExecuteAsync(async () => await _bucket.CreateAsync())
+                    // create the bucket (409 = already exists = OK)
+                    createBucketPolicy.ExecuteAsync(async () =>
+                    {
+                        try { await _bucket.CreateAsync(); }
+                        catch (OssApiException e) when (e.HttpResponseMessage?.StatusCode == System.Net.HttpStatusCode.Conflict)
+                        { _logger.LogInformation($"Bucket {_bucket.BucketKey} already exists, continuing."); }
+                    })
                 );
 
             _logger.LogInformation($"Bucket {_bucket.BucketKey} created");
