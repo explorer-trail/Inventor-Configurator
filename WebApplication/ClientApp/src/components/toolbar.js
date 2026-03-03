@@ -68,7 +68,7 @@ export class Toolbar extends Component {
           logo={
             <Logo link="https://aps.autodesk.com" label="Autodesk HIG">
               <PlaceCenterContainer>
-                <img src={"logo.png"} alt="" style={{ height: '32px' }}/>
+                <img src={"logo.png"} alt="" style={{ height: '48px' }}/>
               </PlaceCenterContainer>
             </Logo>
           }
@@ -77,23 +77,6 @@ export class Toolbar extends Component {
               <PlaceCenterContainer>
                 {this.props.children}
               </PlaceCenterContainer>
-              <Interactions>
-                <Separator />
-                <NavAction title="Log" icon={<Service24 />}>
-                  <div>
-                    <h3>Navigation Action</h3>
-                    <p>
-                      You can put what ever you want in here. You can also change
-                      the icon and the title of the button.
-                    </p>
-                  </div>
-                </NavAction>
-                <span id="ProfileActionHolder">
-                <ProfileAction avatarName={this.props.profile.name} avatarImage={this.props.profile.avatarUrl}>
-                  <UserDetails profile={this.props.profile} logout={this.logout} />
-                </ProfileAction>
-                </span>
-              </Interactions>
             </React.Fragment>
           }
         />
